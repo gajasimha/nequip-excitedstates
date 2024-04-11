@@ -216,8 +216,9 @@ class AtomicInMemoryDataset(AtomicDataset):
 
     def process(self):
         data = self.get_data()
+        
         if len(data) == 1:
-
+            
             # It's a data list
             data_list = data[0]
             if not (self.include_frames is None or data[0] is None):
@@ -258,6 +259,7 @@ class AtomicInMemoryDataset(AtomicDataset):
 
             # check dimesionality
             num_examples = set([len(a) for a in fields.values()])
+            
             if not len(num_examples) == 1:
                 raise ValueError(
                     f"This dataset is invalid: expected all fields to have same length (same number of examples), but they had shapes { {f: v.shape for f, v in fields.items() } }"
@@ -269,19 +271,26 @@ class AtomicInMemoryDataset(AtomicDataset):
                 include_frames = range(num_examples)
 
             # Make AtomicData from it:
+
             if AtomicDataDict.EDGE_INDEX_KEY in all_keys:
                 # This is already a graph, just build it
                 constructor = AtomicData
             else:
                 # do neighborlist from points
                 constructor = AtomicData.from_points
+
                 assert "r_max" in all_keys
                 assert AtomicDataDict.POSITIONS_KEY in all_keys
 
+            # Error after this point! 
             data_list = [
                 constructor(**{**{f: v[i] for f, v in fields.items()}, **fixed_fields})
                 for i in include_frames
             ]
+            #   Combine dynamic fields with fixed fields
+            #   combined_fields = {**dynamic_fields, **fixed_fields}
+            #   Create an object using the constructor with the combined fields
+            #   obj = constructor(**combined_fields)
 
         else:
             raise ValueError("Invalid return from `self.get_data()`")
@@ -289,6 +298,7 @@ class AtomicInMemoryDataset(AtomicDataset):
         # Batch it for efficient saving
         # This limits an AtomicInMemoryDataset to a maximum of LONG_MAX atoms _overall_, but that is a very big number and any dataset that large is probably not "InMemory" anyway
         data = Batch.from_data_list(data_list, exclude_keys=fixed_fields.keys())
+
         del data_list
         del fields
 

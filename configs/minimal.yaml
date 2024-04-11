@@ -22,9 +22,7 @@ num_features: 16
 # key_mapping is used to map the key in the npz file to the NequIP default values (see data/_key.py)
 # all arrays are expected to have the shape of (nframe, natom, ?) except the fixed fields
 # note that if your data set uses pbc, you need to also pass an array that maps to the nequip "pbc" key
-dataset: npz                                                                       # type of data set, can be npz or ase
-dataset_url: http://quantum-machine.org/gdml/data/npz/aspirin_ccsd.zip             # url to download the npz. optional
-dataset_file_name: ./benchmark_data/aspirin_ccsd-train.npz                         # path to data set file
+
 key_mapping:
   z: atomic_numbers                                                                # atomic species, integers
   E: total_energy                                                                  # total potential eneriges to train to
