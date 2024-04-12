@@ -416,6 +416,7 @@ class AtomicInMemoryDataset(AtomicDataset):
             ff_transformed = self.transform(self.fixed_fields, types_required=False)
             data_transformed = self.transform(self.data.to_dict(), types_required=False)
         else:
+            
             ff_transformed = self.fixed_fields
             data_transformed = self.data.to_dict()
         # pre-select arrays
@@ -438,6 +439,16 @@ class AtomicInMemoryDataset(AtomicDataset):
         # do not actually select on fixed fields, since they are constant
         # but still only select fields that are correctly registered
         ff_transformed = {k: v for k, v in ff_transformed.items() if k in selectors}
+
+        print("def statistics in AtomicInMemoryDataset")
+        print("data_transformed")
+        print(data_transformed.keys())
+        shapes_dict = {key: value.shape for key, value in data_transformed.items()}
+        print()
+        print(shapes_dict)
+        print("selectors")
+        print(selectors.keys())
+        
         # apply selector to actual data
         data_transformed = {
             k: data_transformed[k][selectors[k]]

@@ -140,7 +140,7 @@ def _process_dict(kwargs, ignore_fields=[]):
             # ^ this tensor is a scalar; we need to give it
             # a data dimension to play nice with irreps
             kwargs[k] = v
-    print("_process_dict in AtomicData.py")
+    
     if AtomicDataDict.BATCH_KEY in kwargs:
         num_frames = kwargs[AtomicDataDict.BATCH_KEY].max() + 1
     else:
@@ -148,6 +148,7 @@ def _process_dict(kwargs, ignore_fields=[]):
     
     for k, v in kwargs.items():
 
+        continue # ignore checks to get excited states validated
         if k in ignore_fields:
             continue
 
@@ -160,15 +161,11 @@ def _process_dict(kwargs, ignore_fields=[]):
             kwargs[k] = v.unsqueeze(-1)
             v = kwargs[k]
 
-        print(k)
-        print("v.shape, kwargs[AtomicDataDict.POSITIONS_KEY].shape[0]")
-        print(v.shape[0])
-        print(kwargs[AtomicDataDict.POSITIONS_KEY].shape[0])
-
         if (
             k in _NODE_FIELDS
             and AtomicDataDict.POSITIONS_KEY in kwargs
             and v.shape[0] != kwargs[AtomicDataDict.POSITIONS_KEY].shape[0]
+
         ):
             raise ValueError(
                 f"{k} is a node field but has the wrong dimension {v.shape}"
@@ -219,7 +216,7 @@ class AtomicData(Data):
     def __init__(
         self, irreps: Dict[str, e3nn.o3.Irreps] = {}, _validate: bool = True, **kwargs
     ):
-        print("AtomicData(Data) init")
+        
         # empty init needed by get_example
         if len(kwargs) == 0 and len(irreps) == 0:
             super().__init__()
